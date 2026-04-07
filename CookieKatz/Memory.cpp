@@ -375,12 +375,9 @@ BYTE* Memory::PatchBaseAddress(const BYTE* pattern, size_t patternSize, uintptr_
     PatchPattern(newPattern, baseAddrPattern, 16);
     PatchPattern(newPattern, baseAddrPattern, 24);
     PatchPattern(newPattern, baseAddrPattern, 56);
-    PatchPattern(newPattern, baseAddrPattern, 80);
-    PatchPattern(newPattern, baseAddrPattern, 136);
-    PatchPattern(newPattern, baseAddrPattern, 168);
-    PatchPattern(newPattern, baseAddrPattern, 176);
-    PatchPattern(newPattern, baseAddrPattern, 184);
-
+    PatchPattern(newPattern, baseAddrPattern, 64);
+    PatchPattern(newPattern, baseAddrPattern, 88);
+    PatchPattern(newPattern, baseAddrPattern, 152);
     return newPattern;
 }
 
@@ -429,7 +426,7 @@ BOOL Memory::FindPattern(const BYTE* pattern, size_t patternSize, uintptr_t* coo
                 }
                 else {
                     //This happens quite a lot, will not print these errors on release build
-                    //DEBUG_PRINT_ERROR_MESSAGE(TEXT("ReadProcessMemory failed\n"));
+                    //DEBUG_PRINT_ERROR_MESSAGE(TEXT("ReadProcessMemory failed\n"), hOutFile);
                 }
                 free(newPattern);
                 delete[] buffer;

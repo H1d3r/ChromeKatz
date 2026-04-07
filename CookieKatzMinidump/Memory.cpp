@@ -288,11 +288,9 @@ BYTE* PatchBaseAddress(const BYTE* pattern, size_t patternSize, uintptr_t baseAd
 	PatchPattern(newPattern, baseAddrPattern, 16);
 	PatchPattern(newPattern, baseAddrPattern, 24);
 	PatchPattern(newPattern, baseAddrPattern, 56);
-	PatchPattern(newPattern, baseAddrPattern, 80);
-	PatchPattern(newPattern, baseAddrPattern, 136);
-	PatchPattern(newPattern, baseAddrPattern, 168);
-	PatchPattern(newPattern, baseAddrPattern, 176);
-	PatchPattern(newPattern, baseAddrPattern, 184);
+	PatchPattern(newPattern, baseAddrPattern, 64);
+	PatchPattern(newPattern, baseAddrPattern, 88);
+	PatchPattern(newPattern, baseAddrPattern, 152);
 
 	return newPattern;
 }

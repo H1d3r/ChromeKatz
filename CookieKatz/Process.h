@@ -18,8 +18,10 @@ public:
 
 	//Only use this object to close these handles
 	~Process() {
-		CloseHandle(this->hProcess);
-		CloseHandle(this->hOutFile);
+		if (this->hProcess != INVALID_HANDLE_VALUE)
+			CloseHandle(this->hProcess);
+		if (this->hOutFile != INVALID_HANDLE_VALUE)
+			CloseHandle(this->hOutFile);
 	}
 
 	HANDLE GetPrivateHandle() {
