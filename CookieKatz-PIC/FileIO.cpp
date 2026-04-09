@@ -24,7 +24,7 @@ HANDLE OpenOrCreateFileForAppend(Pointers* ctx, LPCSTR filePath) {
         NULL                    // No template
     );
 
-    if (hFile == INVALID_HANDLE_VALUE)
+    if (hFile == NULL || hFile == INVALID_HANDLE_VALUE)
         return nullptr;
 
     LARGE_INTEGER dist;

@@ -8,5 +8,4 @@ BOOL WriteToFile(const char* str, Pointers* ctx);
 HANDLE OpenOrCreateFileForAppend(Pointers* ctx, LPCSTR filePath);
 BOOL WriteHexToFile(const unsigned char* bytes, int len, Pointers* ctx);
 BOOL WriteHexLineToFile(const unsigned char* bytes, int len, Pointers* ctx);
-BOOL WriteLineToFileW(const wchar_t* wstr, Pointers* ctx);
 BOOL WriteToFileW(const wchar_t* wstr, Pointers* ctx);

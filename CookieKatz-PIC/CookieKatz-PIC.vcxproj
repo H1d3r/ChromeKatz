@@ -112,8 +112,7 @@
       <MapExports>true</MapExports>
       <OptimizeReferences>false</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <FunctionOrder>
-      </FunctionOrder>
+      <FunctionOrder>FunctionOrder.txt</FunctionOrder>
       <EntryPointSymbol>_code</EntryPointSymbol>
       <NoEntryPoint>true</NoEntryPoint>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -123,8 +122,8 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.bin"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.h" -CArray</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.bin"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.h" -CArray</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,8 +151,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.p
       <GenerateMapFile>true</GenerateMapFile>
       <MapExports>true</MapExports>
       <OptimizeReferences>false</OptimizeReferences>
-      <FunctionOrder>
-      </FunctionOrder>
+      <FunctionOrder>FunctionOrder.txt</FunctionOrder>
       <EntryPointSymbol>_code</EntryPointSymbol>
       <NoEntryPoint>true</NoEntryPoint>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -164,8 +162,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.p
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.bin"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.h" -CArray</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.bin"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.h" -CArray</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -195,8 +193,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.p
       <MapExports>true</MapExports>
       <OptimizeReferences>false</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <FunctionOrder>
-      </FunctionOrder>
+      <FunctionOrder>FunctionOrder.txt</FunctionOrder>
       <EntryPointSymbol>_code</EntryPointSymbol>
       <NoEntryPoint>true</NoEntryPoint>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -205,8 +202,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.p
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.bin"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.h" -CArray</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.bin"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.h" -CArray</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -234,8 +231,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.p
       <GenerateMapFile>true</GenerateMapFile>
       <MapExports>true</MapExports>
       <OptimizeReferences>false</OptimizeReferences>
-      <FunctionOrder>
-      </FunctionOrder>
+      <FunctionOrder>FunctionOrder.txt</FunctionOrder>
       <EntryPointSymbol>_code</EntryPointSymbol>
       <NoEntryPoint>true</NoEntryPoint>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -244,8 +240,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.p
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.bin"
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)\Shellcode.h" -CArray</Command>
+      <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.bin"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(ProjectDir)\Extract.ps1" -dllPath "$(TargetPath)" -outPath "$(ProjectDir)Shellcode.h" -CArray</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

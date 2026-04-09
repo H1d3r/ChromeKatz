@@ -1,7 +1,15 @@
 #pragma once
 #include <wtypes.h>
 
+enum class Config {
+    Chrome,
+    Edge
+};
+
 struct Pointers {
+
+    Config targetConfig = Config::Chrome;
+
     typedef FARPROC(WINAPI* fnGetProcAddress)(HMODULE, LPCSTR);
     typedef HMODULE(WINAPI* fnLoadLibraryA)(LPCSTR);
     typedef LPVOID(WINAPI* fnHeapAlloc)(HANDLE, DWORD, SIZE_T);

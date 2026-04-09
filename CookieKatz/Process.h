@@ -18,9 +18,9 @@ public:
 
 	//Only use this object to close these handles
 	~Process() {
-		if (this->hProcess != INVALID_HANDLE_VALUE)
+		if (this->hProcess != NULL && this->hProcess != INVALID_HANDLE_VALUE)
 			CloseHandle(this->hProcess);
-		if (this->hOutFile != INVALID_HANDLE_VALUE)
+		if (this->hOutFile != NULL && this->hOutFile != INVALID_HANDLE_VALUE)
 			CloseHandle(this->hOutFile);
 	}
 
